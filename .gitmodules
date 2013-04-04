@@ -4,3 +4,9 @@
 [submodule "src/cloverfield/modules/behaviour"]
 	path = src/cloverfield/modules/behaviour
 	url = https://github.com/nakkaya/alter-ego.git
+[submodule "src/clojurefield/modules/vision"]
+	path = src/clojurefield/modules/vision
+	url = https://github.com/nakkaya/vision.git
+[submodule "src/clojurefield/modules/behaviour"]
+	path = src/clojurefield/modules/behaviour
+	url = https://github.com/nakkaya/alter-ego.git
