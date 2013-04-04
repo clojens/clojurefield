@@ -34,9 +34,9 @@
   '(java.net URL)
   )
 
-(def root "build/speech/cmusphinx")
+(def root "build/ai/components")
 
-;; init common 
+;; Init common
 (.setLevel (Logger/getLogger "") Level/WARNING)
 (def logMath (new LogMath 1.0001 true))
 
@@ -45,12 +45,12 @@
 (def wordInsertionProbability 1E-36)
 (def languageWeight 8.0)
 
-;; init audio data
+;; Init audio data
 (def audioSource (new AudioFileDataSource 3200 nil))
-(def audioURL (new URL (str "file:" root "/src/apps/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav")))
+(def audioURL (new URL (str "file:" root "/demo/files/10001-90210-01803.wav")))
 (.setAudioFile audioSource audioURL nil)
 
-;;init front end
+;; Init front end
 (def dataBlocker (new DataBlocker
   10)) ;; blockSizeMs
 
@@ -100,6 +100,7 @@
   3)) ;; window
 
 
+;; Sequence of processing ops
 (def pipeline [
   audioSource
   dataBlocker
@@ -114,12 +115,15 @@
   cmn
   featureExtraction])
 
+;; Instantiate a Java object from class
 (def frontend (new FrontEnd pipeline))
 
-;; init models
+;; Initialize model manager
 (def unitManager (new UnitManager))
 
+;; Instance of dictionary type
 (def dictionary (new FastDictionary
+  ;; URL as constructor method signature
   (new URL (str "file:" root "/models/acoustic/tidigits/dict/dictionary"))
   (new URL (str "file:" root "/models/acoustic/tidigits/noisedict"))
   []
@@ -129,6 +133,7 @@
   false
   unitManager))
 
+;; ???
 (def modelLoader (new Sphinx3Loader
   (new URL (str "file:" root "/models/acoustic/tidigits"))
   "mdef"
@@ -141,10 +146,11 @@
   true
   ))
 
+;; Junction, bind all objects together
 (def model (new TiedStateAcousticModel modelLoader unitManager true))
 
 
-;; init linguist
+;; Init linguistics: grammar
 (def grammar (new JSGFGrammar
   ;; URL baseURL
   (new URL (str "file:" root "/src/apps/edu/cmu/sphinx/demo/transcriber/"))
@@ -156,6 +162,7 @@
   false ;; boolean addFillerWords
   dictionary)) ;; Dictionary dictionary
 
+;; Flat model
 (def linguist (new FlatLinguist
   model ;; AcousticModel acousticModel
   logMath ;; LogMath logMath
@@ -174,30 +181,47 @@
   1.0 ;; double phoneInsertionProbability
   nil)) ;; AcousticModel phoneLoopAcousticModel
 
-;; init recognizer
-(def scorer (new ThreadedAcousticScorer frontend nil 10 true 0 Thread/NORM_PRIORITY))
+;; Init recognizer multi-threads?
+(def scorer
+  (new ThreadedAcousticScorer
+    frontend
+    nil
+    10
+    true
+    0
+    Thread/NORM_PRIORITY))
 
+;; Simple cut instrument
 (def pruner (new SimplePruner))
 
-(def activeListFactory (new PartitionActiveListFactory absoluteBeamWidth relativeBeamWidth logMath))
+;; Active ordered list (async returns possible?)
+(def activeListFactory
+  (new PartitionActiveListFactory
+       absoluteBeamWidth
+       relativeBeamWidth
+       logMath))
 
+;; Create a search manager object and initialize
 (def searchManager (new SimpleBreadthFirstSearchManager
   logMath linguist pruner
   scorer activeListFactory
   false 0.0 0 false))
 
+;; Decome messages from search?
 (def decoder (new Decoder
   searchManager
   false false
   []
   100000))
 
+; ???
 (def recognizer (new Recognizer decoder nil))
 
-;; allocate the resources necessary for the recognizer
+;; Allocate the resources necessary for the recognizer
 (.allocate recognizer)
 
-;; Loop until last utterance in the audio file has been decoded in which case the recognizer will return null.
+;; Loop until last utterance in the audio file has been decoded in which case
+;; the recognizer will return null.
 ;;(print (.getBestResultNoFiller (.recognize recognizer)))
 
 (loop
