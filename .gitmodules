@@ -1,0 +1,6 @@
+[submodule "src/cloverfield/modules/vision"]
+	path = src/cloverfield/modules/vision
+	url = https://github.com/nakkaya/vision.git
+[submodule "src/cloverfield/modules/behaviour"]
+	path = src/cloverfield/modules/behaviour
+	url = https://github.com/nakkaya/alter-ego.git
