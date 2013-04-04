@@ -1,0 +1,37 @@
+
+
+;; A uniform resource identifier (URI) is a string of characters used to
+;; identify a name or a web resource. Such identification enables interaction
+;; with representations of the web resource over a network (typically the World
+;; Wide Web) using specific protocols. Schemes specifying a concrete syntax and
+;; associated protocols define each URI.
+(def uri
+ ^{:doc "REFACTOR: Will provide protocol and generic access to common RESTful
+        API's over a network, to handle returned data and pass on for analysis."}
+  (atom { :class
+
+;; Anything you type in here will be executed 
+;; immediately with the results shown on the 
+;; right.
+
+(ns clojurefield.data.sources
+  
+  ^{:doc "Naive first steps in data sources for AI aided cyberwar defenses."}
+  
+  ;; Short named access to commonly used functions in namespaces
+  (:require [clojure.repl   :as repl     :refer [doc dir source]]
+            [clojure.pprint :as pprint   :refer [pprint print-table]]
+            [clojure.string :as string   :refer [split join]]
+             ))
+  
+(doc split)
+(def input-uri "http://oeis.org/search?fmt=text&q=2,5,14,50,233")
+
+(def protocol (split input-uri  #"://" 1))
+
+(feed 'http://oeis.org/search?fmt=text&q=2,5,14,50,233)
+
+
+         jurewerkz/urly "1.0.0"]
+
+
